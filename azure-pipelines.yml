@@ -1,7 +1,41 @@
-# Node.js Express Web App to Linux on Azure
-# Build a Node.js Express app and deploy it to Azure as a Linux web app.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
 
 trigger:
 - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+
+- bash: |
+    terraform init \
+      -backend-config="storage_account_name=$TF_STATE_BLOB_ACCOUNT_NAME" \
+      -backend-config="container_name=$TF_STATE_BLOB_CONTAINER_NAME" \
+      -backend-config="key=$TF_STATE_BLOB_FILE" \
+      -backend-config="sas_token=$TF_STATE_BLOB_SAS_TOKEN"
+  displayName: Terraform Init
+  env:
+    TF_STATE_BLOB_ACCOUNT_NAME:   $(tf_state_sa_account)
+    TF_STATE_BLOB_CONTAINER_NAME: $(tf_state_sa_container)
+    TF_STATE_BLOB_FILE:           $(tf-state-sa-file)
+    TF_STATE_BLOB_SAS_TOKEN:      $(tf-state-sas-token)
+
+- bash: terraform plan -out deployment.tfplan
+  displayName: Terraform Plan
+  env:
+    ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
+    ARM_CLIENT_ID:  $(tf_var_arm_client_id)
+    ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
+    ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
+
+- bash: terraform apply -auto-approve deployment.tfplan
+  displayName: Terraform Apply
+  env:
+    ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
+    ARM_CLIENT_ID:  $(tf_var_arm_client_id)
+    ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
+    ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
