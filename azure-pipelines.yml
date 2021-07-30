@@ -28,9 +28,9 @@ pool:
       displayName: Build and push an image to container registry
       inputs:
         command: buildAndPush
-        containerRegistry: $(dockerRegistryServiceConnection)
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
 
