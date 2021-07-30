@@ -9,6 +9,7 @@ trigger:
 variables:
   vmImageName: ubuntu-latest
   dockerRegistryServiceConnection: $(tf_var_docker_service_conn)
+  imageRepository: '$(tf_var_repository)-$(tf_var_arm_env)' # App Image Name
   containerRegistry: $(tf_var_container_registry) # Container Registry Name
   dockerfilePath: '$(Build.SourcesDirectory)/app/Dockerfile'
   tag: '$(Build.BuildId)'
@@ -27,7 +28,7 @@ stages:
       inputs:
         command: buildAndPush
         connection: $(tf_var_arm_acr_connection)
-        repository: '$(tf_var_repository)-$(tf_var_env)'
+        repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
@@ -63,7 +64,7 @@ stages:
         ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
         ARM_ENV:  $(tf_var_arm_env)
         ARM_ACR:  $(tf_var_arm_acr)
-        ARM_REPOSITORY:  '$(tf_var_repository)-$(tf_var_env)'
+        ARM_REPOSITORY:  $(imageRepository)
         ARM_BUILD_TAG:  $(tag)
 
     - bash: terraform apply -auto-approve deployment.tfplan
@@ -75,5 +76,5 @@ stages:
         ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
         ARM_ENV:  $(tf_var_arm_env)
         ARM_ACR:  $(tf_var_arm_acr)
-        ARM_REPOSITORY:  '$(tf_var_repository)-$(tf_var_env)'
+        ARM_REPOSITORY:  $(imageRepository)
         ARM_BUILD_TAG:  $(tag)
