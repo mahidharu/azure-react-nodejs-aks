@@ -16,24 +16,6 @@ variables:
 pool:
   vmImage: $(vmImageName)
 
-- stage: Build
-  displayName: Build stage
-  jobs:  
-  - job: Build
-    displayName: Build job
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)
-          
 - bash: |
     terraform init \
       -backend-config="storage_account_name=$TF_STATE_BLOB_ACCOUNT_NAME" \
