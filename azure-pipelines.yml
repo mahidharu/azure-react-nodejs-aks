@@ -6,10 +6,17 @@
 trigger:
 - main
 
-pool:
-  vmImage: ubuntu-latest
+variables:
+  vmImageName: ubuntu-latest
+  imageRepository: $(tf_var_repository) # App iamge name
+  dockerfilePath: '$(Build.SourcesDirectory)/app/Dockerfile'
+  dockerRegistryServiceConnection:  $(tf_var_container_Registry) # Container Registry Name
+  tag: '$(Build.BuildId)'
+  imagePullSecret: $(tf_var_image_pull_secret)
+  k8sNamespace: $(tf_var_k8s_name_space)
 
-steps:
+pool:
+  vmImage: $(vmImageName)
 
 - bash: |
     terraform init \
@@ -34,6 +41,78 @@ steps:
 
 - bash: terraform apply -auto-approve deployment.tfplan
   displayName: Terraform Apply
+  env:
+    ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
+    ARM_CLIENT_ID:  $(tf_var_arm_client_id)
+    ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
+    ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
+
+- stage: Build
+  displayName: Build stage
+  jobs:  
+  - job: Build
+    displayName: Build job
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+          
+    - task: PublishPipelineArtifact@1
+      inputs:
+        artifactName: 'manifests'
+        path: 'manifests'
+  env:
+    ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
+    ARM_CLIENT_ID:  $(tf_var_arm_client_id)
+    ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
+    ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
+
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy job
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'azooinmyluggagepipelinesjavascriptdocker.aksnamespace'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: 'manifests'
+              downloadPath: '$(System.ArtifactsDirectory)/manifests'
+
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              namespace: $(k8sNamespace)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+              
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              namespace: $(k8sNamespace)
+              manifests: |
+                $(System.ArtifactsDirectory)/manifests/deployment.yml
+                $(System.ArtifactsDirectory)/manifests/service.yml
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
   env:
     ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
     ARM_CLIENT_ID:  $(tf_var_arm_client_id)

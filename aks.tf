@@ -1,8 +1,8 @@
-resource "azurerm_kubernetes_cluster" "example" {
-  name                = "${var.prefix}-k8s"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
-  dns_prefix          = "${var.prefix}-k8s"
+resource "azurerm_kubernetes_cluster" "reactapp" {
+  name                = "${var.prefix}-k8s-${var.ARM_ENV}"
+  location            = "azurerm_resource_group.${var.prefix}.location"
+  resource_group_name = "azurerm_resource_group.${var.prefix}.name"
+  dns_prefix          = "${var.ARM_ENV}-${var.prefix}-k8s"
 
   default_node_pool {
     name       = "default"
@@ -24,6 +24,6 @@ resource "azurerm_kubernetes_cluster" "example" {
   }*/
 
   tags = {
-    environment = "dev"
+    environment = var.ARM_ENV
   }
 }

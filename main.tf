@@ -18,7 +18,7 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "example" {
-  name     = "${var.prefix}-example-resources"
+resource "azurerm_resource_group" "reactapp" {
+  name     = "${var.prefix}-rg-${var.ARM_ENV}"
   location = var.location
 }

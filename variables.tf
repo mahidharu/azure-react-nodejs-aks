@@ -1,6 +1,6 @@
 variable "prefix" {
   description = "A prefix used for all resources in this example"
-  default = "kubernetes-aks1"
+  default = "reactapp"
 }
 
 variable "location" {
@@ -18,4 +18,6 @@ variable "ARM_CLIENT_SECRET" {
 }
 
 variable "ARM_TENANT_ID" {
+}
+variable "ARM_ENV" {
 }
