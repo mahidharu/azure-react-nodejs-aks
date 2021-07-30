@@ -13,11 +13,7 @@ variables:
   dockerfilePath: '$(Build.SourcesDirectory)/app/Dockerfile'
   tag: '$(Build.BuildId)'
 
-pool:
-  vmImage: $(vmImageName)
-
-steps:
-
+stages:
 - stage: Build
   displayName: Build stage
   jobs:  
@@ -36,31 +32,39 @@ steps:
         tags: |
           $(tag)
           
-- bash: |
-    terraform init \
-      -backend-config="storage_account_name=$TF_STATE_BLOB_ACCOUNT_NAME" \
-      -backend-config="container_name=$TF_STATE_BLOB_CONTAINER_NAME" \
-      -backend-config="key=$TF_STATE_BLOB_FILE" \
-      -backend-config="sas_token=$TF_STATE_BLOB_SAS_TOKEN"
-  displayName: Terraform Init
-  env:
-    TF_STATE_BLOB_ACCOUNT_NAME:   $(tf_state_sa_account)
-    TF_STATE_BLOB_CONTAINER_NAME: '$(tf_state_sa_container)-$(tf_var_env)'
-    TF_STATE_BLOB_FILE:           $(tf-state-sa-file)
-    TF_STATE_BLOB_SAS_TOKEN:      $(tf-state-sas-token)
+- stage: Deploy
+  displayName: Deploy stage
+  jobs:  
+  - job: Deploy
+    displayName: Deploy job
+    pool:
+      vmImage: $(vmImageName)
+    steps:      
+    - bash: |
+        terraform init \
+          -backend-config="storage_account_name=$TF_STATE_BLOB_ACCOUNT_NAME" \
+          -backend-config="container_name=$TF_STATE_BLOB_CONTAINER_NAME" \
+          -backend-config="key=$TF_STATE_BLOB_FILE" \
+          -backend-config="sas_token=$TF_STATE_BLOB_SAS_TOKEN"
+      displayName: Terraform Init
+      env:
+        TF_STATE_BLOB_ACCOUNT_NAME:   $(tf_state_sa_account)
+        TF_STATE_BLOB_CONTAINER_NAME: '$(tf_state_sa_container)-$(tf_var_env)'
+        TF_STATE_BLOB_FILE:           $(tf-state-sa-file)
+        TF_STATE_BLOB_SAS_TOKEN:      $(tf-state-sas-token)
 
-- bash: terraform plan -out deployment.tfplan
-  displayName: Terraform Plan
-  env:
-    ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
-    ARM_CLIENT_ID:  $(tf_var_arm_client_id)
-    ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
-    ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
+    - bash: terraform plan -out deployment.tfplan
+      displayName: Terraform Plan
+      env:
+        ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
+        ARM_CLIENT_ID:  $(tf_var_arm_client_id)
+        ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
+        ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
 
-- bash: terraform apply -auto-approve deployment.tfplan
-  displayName: Terraform Apply
-  env:
-    ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
-    ARM_CLIENT_ID:  $(tf_var_arm_client_id)
-    ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
-    ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
+    - bash: terraform apply -auto-approve deployment.tfplan
+      displayName: Terraform Apply
+      env:
+        ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
+        ARM_CLIENT_ID:  $(tf_var_arm_client_id)
+        ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
+        ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
