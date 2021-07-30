@@ -30,7 +30,6 @@ stages:
       displayName: Build and push an image to container registry
       inputs:
         command: buildAndPush
-        connection: $(tf_var_arm_acr_connection)
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
@@ -65,6 +64,10 @@ stages:
         ARM_CLIENT_ID:  $(tf_var_arm_client_id)
         ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
         ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
+        ARM_ENV:  $(tf_var_env)
+        ARM_ACR:  $(tf_var_container_registry)
+        ARM_REPOSITORY:  $(imageRepository)
+        ARM_BUILD_TAG:  $(tag)
 
     - bash: terraform apply -auto-approve deployment.tfplan
       displayName: Terraform Apply
@@ -73,3 +76,7 @@ stages:
         ARM_CLIENT_ID:  $(tf_var_arm_client_id)
         ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
         ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
+        ARM_ENV:  $(tf_var_env)
+        ARM_ACR:  $(tf_var_container_registry)
+        ARM_REPOSITORY:  $(imageRepository)
+        ARM_BUILD_TAG:  $(tag)
