@@ -64,8 +64,10 @@ stages:
         ARM_CLIENT_ID:  $(tf_var_arm_client_id)
         ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
         ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
-        ARM_ENV:  $(tf_var_arm_env)
-        ARM_ACR:  '$(tf_var_container_registry)/$(imageRepository):$(tag)'
+        ARM_ENV:  $(tf_var_env)
+        ARM_ACR:  $(tf_var_container_registry)
+        ARM_REPOSITORY:  $(imageRepository)
+        ARM_BUILD_TAG:  $(tag)
 
     - bash: terraform apply -auto-approve deployment.tfplan
       displayName: Terraform Apply
@@ -74,5 +76,7 @@ stages:
         ARM_CLIENT_ID:  $(tf_var_arm_client_id)
         ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
         ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
-        ARM_ENV:  $(tf_var_arm_env)
-        ARM_ACR:  '$(tf_var_container_registry)/$(imageRepository):$(tag)'
+        ARM_ENV:  $(tf_var_env)
+        ARM_ACR:  $(tf_var_container_registry)
+        ARM_REPOSITORY:  $(imageRepository)
+        ARM_BUILD_TAG:  $(tag)
