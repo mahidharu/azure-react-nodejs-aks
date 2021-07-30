@@ -1,0 +1,64 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+variables:
+  vmImageName: ubuntu-latest
+  dockerRegistryServiceConnection:  $(tf_var_container_registry) # Container Registry Name
+  imageRepository: '$(tf_var_repository)-$(tf_var_env)' # App Image Name
+  dockerfilePath: '$(Build.SourcesDirectory)/app/Dockerfile'
+  tag: '$(Build.BuildId)'
+
+pool:
+  vmImage: $(vmImageName)
+
+- stage: Build
+  displayName: Build stage
+  jobs:  
+  - job: Build
+    displayName: Build job
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        tags: |
+          $(tag)
+
+- bash: |
+    terraform init \
+      -backend-config="storage_account_name=$TF_STATE_BLOB_ACCOUNT_NAME" \
+      -backend-config="container_name=$TF_STATE_BLOB_CONTAINER_NAME" \
+      -backend-config="key=$TF_STATE_BLOB_FILE" \
+      -backend-config="sas_token=$TF_STATE_BLOB_SAS_TOKEN"
+  displayName: Terraform Init
+  env:
+    TF_STATE_BLOB_ACCOUNT_NAME:   $(tf_state_sa_account)
+    TF_STATE_BLOB_CONTAINER_NAME: $(tf_state_sa_container)
+    TF_STATE_BLOB_FILE:           $(tf-state-sa-file)
+    TF_STATE_BLOB_SAS_TOKEN:      $(tf-state-sas-token)
+
+- bash: terraform plan -out deployment.tfplan
+  displayName: Terraform Plan
+  env:
+    ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
+    ARM_CLIENT_ID:  $(tf_var_arm_client_id)
+    ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
+    ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
+
+- bash: terraform apply -auto-approve deployment.tfplan
+  displayName: Terraform Apply
+  env:
+    ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
+    ARM_CLIENT_ID:  $(tf_var_arm_client_id)
+    ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
+    ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
