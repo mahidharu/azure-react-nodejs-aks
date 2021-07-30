@@ -10,7 +10,7 @@ resources:
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '14483226-cb10-4f0b-9b22-673f40079c9e'
+  dockerRegistryServiceConnection: $(tf_var_docker_service_conn)
   imageRepository: 'reactapp'
   containerRegistry: 'reapp.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/app/Dockerfile'

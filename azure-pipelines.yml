@@ -7,11 +7,15 @@ trigger:
 - main
 
 variables:
-  vmImageName: ubuntu-latest
-  dockerRegistryServiceConnection:  $(tf_var_container_registry) # Container Registry Name
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: $(tf_var_docker_service_conn)
   imageRepository: '$(tf_var_repository)-$(tf_var_env)' # App Image Name
+  containerRegistry: $(tf_var_container_registry) # Container Registry Name
   dockerfilePath: '$(Build.SourcesDirectory)/app/Dockerfile'
   tag: '$(Build.BuildId)'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
 
 stages:
 - stage: Build
