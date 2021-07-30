@@ -33,7 +33,7 @@ pool:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
-
+          
 - bash: |
     terraform init \
       -backend-config="storage_account_name=$TF_STATE_BLOB_ACCOUNT_NAME" \
