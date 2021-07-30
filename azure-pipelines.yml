@@ -43,7 +43,7 @@ pool:
   displayName: Terraform Init
   env:
     TF_STATE_BLOB_ACCOUNT_NAME:   $(tf_state_sa_account)
-    TF_STATE_BLOB_CONTAINER_NAME: $(tf_state_sa_container)
+    TF_STATE_BLOB_CONTAINER_NAME: '$(tf_state_sa_container)-$(tf_var_env)'
     TF_STATE_BLOB_FILE:           $(tf-state-sa-file)
     TF_STATE_BLOB_SAS_TOKEN:      $(tf-state-sas-token)
 
