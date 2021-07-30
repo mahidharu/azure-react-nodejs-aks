@@ -26,6 +26,7 @@ stages:
       displayName: Build and push an image to container registry
       inputs:
         command: buildAndPush
+        azureSubscription: $(tf_var_arm_acr_connection)
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
