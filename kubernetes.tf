@@ -1,9 +1,13 @@
+data "azurerm_kubernetes_cluster" "reactapp" {
+  name = azurerm_kubernetes_cluster.reactapp.name
+}
+
 provider "kubernetes" {
   host = data.azurerm_kubernetes_cluster.reactapp.kube_config.0.host
 
-  client_certificate     = base64decode(data.azurerm_kubernetes_cluster.cluster.kube_config.0.client_certificate)
-  client_key             = base64decode(data.azurerm_kubernetes_cluster.cluster.kube_config.0.client_key)
-  cluster_ca_certificate = base64decode(data.azurerm_kubernetes_cluster.cluster.kube_config.0.cluster_ca_certificate)
+  client_certificate     = base64decode(data.azurerm_kubernetes_cluster.reactapp.kube_config.0.client_certificate)
+  client_key             = base64decode(data.azurerm_kubernetes_cluster.reactapp.kube_config.0.client_key)
+  cluster_ca_certificate = base64decode(data.azurerm_kubernetes_cluster.reactapp.kube_config.0.cluster_ca_certificate)
 }
 
 resource "kubernetes_deployment" "reactapp" {
