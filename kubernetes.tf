@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "reactapp" {
       }
       spec {
         container {
-          image = "${var.ARM_ACR}.azurecr.io/${var.ARM_REPOSITORY}-${var.ARM_ENV}:${var.ARM_BUILD_TAG}"
+          image = "${var.ARM_ACR}.azurecr.io/${var.ARM_REPOSITORY}-${var.ARM_ENV}:${var.build_tag}"
           name  = "reactapp-${var.ARM_ENV}"
 
           port {
