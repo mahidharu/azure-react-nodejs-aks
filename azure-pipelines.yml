@@ -68,7 +68,7 @@ stages:
         ARM_ACR:  $(tf_var_arm_acr)
         ARM_REPOSITORY:  $(imageRepository)
 
-    - bash: terraform plan -out deployment.tfplan -lock=false
+    - bash: terraform plan -var 'build_tag=$(tag)' -out deployment.tfplan -lock=false
       displayName: Terraform Plan
       env:
         ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
