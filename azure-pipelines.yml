@@ -81,7 +81,7 @@ stages:
         ARM_REPOSITORY:  $(imageRepository)
         ARM_BUILD_TAG:  $(tag)
 
-    - bash: terraform apply -auto-approve deployment.tfplan -lock=false
+    - bash: terraform apply -auto-approve deployment.tfplan
       displayName: Terraform Apply
       env:
         ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
