@@ -79,7 +79,7 @@ stages:
         ARM_ACR:  $(tf_var_arm_acr)
         ARM_REPOSITORY:  $(imageRepository)
 
-    - bash: terraform apply -var 'build_tag=$(tag)' -auto-approve -lock=false deployment.tfplan
+    - bash: terraform apply -auto-approve -lock=false deployment.tfplan
       displayName: Terraform Apply
       env:
         ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
