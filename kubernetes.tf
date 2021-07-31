@@ -3,10 +3,6 @@ data "azurerm_kubernetes_cluster" "reactapp" {
   resource_group_name = azurerm_resource_group.reactapp.name
 }
 
-data "azurerm_resource_group" "reactapp" {
-  name = azurerm_resource_group.reactapp.name
-}
-
 provider "kubernetes" {
   host = data.azurerm_kubernetes_cluster.reactapp.kube_config.0.host
 
@@ -24,7 +20,7 @@ resource "kubernetes_deployment" "reactapp" {
   }
 
   spec {
-    replicas = 2
+    replicas = 1
     selector {
       match_labels = {
         App = "Reactapp"
@@ -76,4 +72,8 @@ resource "kubernetes_service" "reactapp" {
 
     type = "LoadBalancer"
   }
+}
+
+output "lb_ip" {
+  value = kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip
 }
