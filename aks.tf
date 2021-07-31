@@ -1,3 +1,7 @@
+resource "azurerm_resource_group" "reactapp" {
+  name     = "${var.prefix}-rg-${var.ARM_ENV}"
+  location = var.location
+}
 resource "azurerm_kubernetes_cluster" "reactapp" {
   name                = "${var.prefix}-k8s-${var.ARM_ENV}"
   location            = azurerm_resource_group.reactapp.location
