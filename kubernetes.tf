@@ -2,6 +2,10 @@ data "azurerm_kubernetes_cluster" "reactapp" {
   name = azurerm_kubernetes_cluster.reactapp.name
 }
 
+data "azurerm_resource_group" "reactapp" {
+  name = azurerm_resource_group.reactapp.name
+}
+
 provider "kubernetes" {
   host = data.azurerm_kubernetes_cluster.reactapp.kube_config.0.host
 
