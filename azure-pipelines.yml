@@ -3,8 +3,13 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger:
-- main
+parameters:
+- name: runBuild
+  type: boolean
+  default: false
+
+trigger: none
+#- main
 
 variables:
   vmImageName: ubuntu-latest
@@ -12,9 +17,10 @@ variables:
   imageRepository: '$(tf_var_repository)-$(tf_var_arm_env)' # App Image Name
   containerRegistry: $(tf_var_container_registry) # Container Registry Name
   dockerfilePath: '$(Build.SourcesDirectory)/app/Dockerfile'
-  tag: '$(Build.BuildId)'
+  tag: 'latest' # '$(Build.BuildId)'
 
 stages:
+- ${{ if eq(parameters.runBuild, true) }}:
 - stage: Build
   displayName: Build stage
   jobs:  
