@@ -1,5 +1,6 @@
 data "azurerm_kubernetes_cluster" "reactapp" {
   name = azurerm_kubernetes_cluster.reactapp.name
+  resource_group_name = azurerm_resource_group.reactapp.name
 }
 
 data "azurerm_resource_group" "reactapp" {
