@@ -21,3 +21,7 @@ provider "azurerm" {
   # Configuration options
   features {}
 }
+
+provider "azuread" {
+  version = "~>0.7"
+}

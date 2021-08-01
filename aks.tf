@@ -1,7 +1,4 @@
-resource "azurerm_resource_group" "reactapp" {
-  name     = "${var.prefix}-rg-${var.ARM_ENV}"
-  location = var.location
-}
+
 resource "azurerm_kubernetes_cluster" "reactapp" {
   name                = "${var.prefix}-k8s-${var.ARM_ENV}"
   location            = azurerm_resource_group.reactapp.location
@@ -14,18 +11,18 @@ resource "azurerm_kubernetes_cluster" "reactapp" {
     vm_size    = "Standard_DS2_v2"
   }
 
-  identity {
+  /*identity {
     type = "SystemAssigned"
-  }
+  }*/
 
-  /*service_principal {
-    client_id     = var.client_id
-    client_secret = var.client_secret
+  service_principal {
+    client_id     = var.ARM_CLIENT_ID
+    client_secret = var.ARM_CLIENT_SECRET
   }
 
   role_based_access_control {
     enabled = true
-  }*/
+  }
 
   tags = {
     environment = var.ARM_ENV
