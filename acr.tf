@@ -1,5 +1,5 @@
 data "azuread_service_principal" "aks_principal" {
-  application_id = var.ARM_CLIENT_ID
+  application_id = var.ARM_SP_ID
 }
 
 /*resource "azurerm_container_registry" "acr" {
