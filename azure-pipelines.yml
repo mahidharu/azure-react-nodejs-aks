@@ -7,7 +7,7 @@ parameters:
 - name: runBuild
   type: boolean
   default: false
-- name: runDestroy
+- name: runDestory
   type: boolean
   default: false
 
@@ -42,8 +42,8 @@ stages:
           containerRegistry: $(dockerRegistryServiceConnection)
           tags: |
             $(tag)
-
-  - stage: Deploy
+          
+- stage: Deploy
   displayName: Deploy stage
   jobs:  
   - job: Deploy
@@ -83,8 +83,8 @@ stages:
         ARM_ACR:  $(tf_var_arm_acr)
         ARM_ACR_ID:  $(tf_var_arm_acr_id)
         ARM_REPOSITORY:  $(imageRepository)
-
-    - ${{ if eq(parameters.runDestroy, false) }}:
+    
+    - ${{ if eq(parameters.runDestory, false) }}:
       - bash: terraform apply -auto-approve -lock=false deployment.tfplan
         displayName: Terraform Apply
         env:
@@ -96,9 +96,9 @@ stages:
           ARM_ACR:  $(tf_var_arm_acr)
           ARM_ACR_ID:  $(tf_var_arm_acr_id)
           ARM_REPOSITORY:  $(imageRepository)
-    - ${{ if eq(parameters.runDestroy, true) }}:
+    - ${{ if eq(parameters.runDestory, true) }}:
       - bash: terraform destroy
-        displayName: Terraform Destroy
+        displayName: Terraform destroy
         env:
           ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
           ARM_CLIENT_ID:  $(tf_var_arm_client_id)
@@ -107,5 +107,4 @@ stages:
           ARM_ENV:  $(tf_var_arm_env)
           ARM_ACR:  $(tf_var_arm_acr)
           ARM_ACR_ID:  $(tf_var_arm_acr_id)
-          ARM_REPOSITORY:  $(imageRepository)
-      
+          ARM_REPOSITORY:  $(imageRepository) 
