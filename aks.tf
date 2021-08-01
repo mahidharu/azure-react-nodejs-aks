@@ -11,18 +11,19 @@ resource "azurerm_kubernetes_cluster" "reactapp" {
     vm_size    = "Standard_DS2_v2"
   }
 
-  identity {
+  # For System Assigned
+  /*identity {
     type = "SystemAssigned"
-  }
+  }*/
 
-  /*service_principal {
+  service_principal {
     client_id     = var.ARM_CLIENT_ID
     client_secret = var.ARM_CLIENT_SECRET
   }
 
   role_based_access_control {
     enabled = true
-  }*/
+  }
 
   tags = {
     environment = var.ARM_ENV
