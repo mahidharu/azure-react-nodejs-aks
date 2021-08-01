@@ -7,6 +7,9 @@ parameters:
 - name: runBuild
   type: boolean
   default: false
+- name: runDestroy
+  type: boolean
+  default: false
 
 trigger: none
 #- main
@@ -92,3 +95,28 @@ stages:
         ARM_ACR:  $(tf_var_arm_acr)
         ARM_ACR_ID:  $(tf_var_arm_acr_id)
         ARM_REPOSITORY:  $(imageRepository)
+
+- ${{ if eq(parameters.runDestroy, true) }}:
+  - stage: Destroy
+    displayName: Destroy stage
+    jobs:  
+    - job: Destroy
+      displayName: Destroy job
+      pool:
+        vmImage: $(vmImageName)
+      steps:      
+      - bash: terraform destroy
+        displayName: Terraform destroy
+        env:
+          TF_STATE_BLOB_ACCOUNT_NAME:   $(tf_state_sa_account)
+          TF_STATE_BLOB_CONTAINER_NAME: '$(tf_state_sa_container)-$(tf_var_arm_env)'
+          TF_STATE_BLOB_FILE:           $(tf-state-sa-file)
+          TF_STATE_BLOB_SAS_TOKEN:      $(tf-state-sas-token)
+          ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
+          ARM_CLIENT_ID:  $(tf_var_arm_client_id)
+          ARM_CLIENT_SECRET:  $(tf_var_arm_client_secret)
+          ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
+          ARM_ENV:  $(tf_var_arm_env)
+          ARM_ACR:  $(tf_var_arm_acr)
+          ARM_ACR_ID:  $(tf_var_arm_acr_id)
+          ARM_REPOSITORY:  $(imageRepository)
