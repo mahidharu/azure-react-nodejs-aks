@@ -3,8 +3,8 @@ data "azuread_service_principal" "aks_principal" {
 }
 
 resource "azurerm_container_registry" "acr" {
-  name                     = "${var.prefix}images"
-  resource_group_name      = azurerm_resource_group.reactapp.name
+  name                     = "reapp"
+  resource_group_name      = "images"
   location                 = azurerm_resource_group.reactapp.location
   sku                      = "Basic"
   admin_enabled            = false
