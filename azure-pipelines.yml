@@ -7,6 +7,9 @@ parameters:
 - name: runBuild
   type: boolean
   default: false
+- name: runDeploy
+  type: boolean
+  default: true
 - name: runDestroy
   type: boolean
   default: false
@@ -42,7 +45,8 @@ stages:
           containerRegistry: $(dockerRegistryServiceConnection)
           tags: |
             $(tag)
-          
+
+- ${{ if eq(parameters.runDeploy, true) }}:
 - stage: Deploy
   displayName: Deploy stage
   jobs:  
