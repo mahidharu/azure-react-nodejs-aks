@@ -66,6 +66,7 @@ stages:
         ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
         ARM_ENV:  $(tf_var_arm_env)
         ARM_ACR:  $(tf_var_arm_acr)
+        ARM_ACR_ID:  $(tf_var_arm_acr_id)
         ARM_REPOSITORY:  $(imageRepository)
 
     - bash: terraform plan -var 'build_tag=$(tag)' -out deployment.tfplan -lock=false
@@ -77,6 +78,7 @@ stages:
         ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
         ARM_ENV:  $(tf_var_arm_env)
         ARM_ACR:  $(tf_var_arm_acr)
+        ARM_ACR_ID:  $(tf_var_arm_acr_id)
         ARM_REPOSITORY:  $(imageRepository)
 
     - bash: terraform apply -auto-approve -lock=false deployment.tfplan
@@ -88,4 +90,5 @@ stages:
         ARM_TENANT_ID:  $(tf_var_arm_tenant_id)
         ARM_ENV:  $(tf_var_arm_env)
         ARM_ACR:  $(tf_var_arm_acr)
+        ARM_ACR_ID:  $(tf_var_arm_acr_id)
         ARM_REPOSITORY:  $(imageRepository)

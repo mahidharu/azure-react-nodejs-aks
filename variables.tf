@@ -27,6 +27,8 @@ variable "ARM_ENV" {
 variable "ARM_ACR" {
 }
 
+variable "ARM_ACR_ID" {
+}
 variable "ARM_REPOSITORY" {
 }
 
