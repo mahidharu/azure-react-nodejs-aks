@@ -97,7 +97,7 @@ stages:
           ARM_ACR_ID:  $(tf_var_arm_acr_id)
           ARM_REPOSITORY:  $(imageRepository)
     - ${{ if eq(parameters.runDestory, true) }}:
-      - bash: terraform destroy -var 'build_tag=$(tag)' -lock=false
+      - bash: terraform destroy -auto-approve=true -var 'build_tag=$(tag)' -lock=false
         displayName: Terraform destroy
         env:
           ARM_SUBSCRIPTION_ID:  $(tf_var_arm_subscription_id)
