@@ -3,7 +3,7 @@ data "azuread_service_principal" "aks_sp" {
 }
 
 output "aks_sp" {
-  value = "${data.azurerm_azuread_service_principal.aks_sp.id}"
+  value = "${data.azuread_service_principal.aks_sp.id}"
 }
 
 /*resource "azurerm_container_registry" "acr" {
