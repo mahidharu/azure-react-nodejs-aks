@@ -1,5 +1,5 @@
 data "azuread_service_principal" "aks_principal" {
-  application_id = var.ARM_SP_ID
+  application_id = var.ARM_CLIENT_ID
 }
 
 /*resource "azurerm_container_registry" "acr" {
@@ -12,7 +12,7 @@ data "azuread_service_principal" "aks_principal" {
 
 resource "azurerm_role_assignment" "acrpull_role" {
   scope                            = var.ARM_ACR_ID
-  role_definition_name             = "AcrPull"
+  role_definition_name             = "Contributor"
   principal_id                     = data.azuread_service_principal.aks_principal.id
   skip_service_principal_aad_check = true
 }
