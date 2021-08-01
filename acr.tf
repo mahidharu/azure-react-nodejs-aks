@@ -1,6 +1,5 @@
 data "azuread_service_principal" "aks_sp" {
   application_id = var.ARM_SP_ID
-  app_role_assignment_required = false
 }
 
 output "aks_sp" {
