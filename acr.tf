@@ -54,11 +54,6 @@ resource "azurerm_role_assignment" "acrpull" {
   principal_id       = data.azurerm_client_config.current.object_id
 }
 
-data "azurerm_kubernetes_cluster" "reactapp" {
-  name = azurerm_kubernetes_cluster.reactapp.name
-  resource_group_name = azurerm_resource_group.reactapp.name
-}
-
 resource "azurerm_role_assignment" "acrpull_role" {
   scope                            = data.azurerm_container_registry.acr.id
   role_definition_name             = "ACRPull"
