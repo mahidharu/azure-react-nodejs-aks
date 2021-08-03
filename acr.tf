@@ -19,9 +19,15 @@ output "acr_id" {
   value = data.azurerm_container_registry.acr.id
 }
 
+data "azurerm_user_assigned_identity" "agentpool_identity" {
+  name                = "${azurerm_kubernetes_cluster.reactapp.name}-agentpool"
+  resource_group_name = azurerm_kubernetes_cluster.reactapp.node_resource_group
+  depends_on          = [azurerm_kubernetes_cluster.reactapp, azurerm_kubernetes_cluster_node_pool.worker_node_pool]
+}
+
 resource "azurerm_role_assignment" "acrpull_role" {
   scope                            = data.azurerm_container_registry.acr.id
   role_definition_name             = "AcrPull"
-  principal_id                    = data.azurerm_kubernetes_cluster.reactapp.kubelet_identity.0.object_id
-  skip_service_principal_aad_check = true
+  principal_id                    = data.azurerm_user_assigned_identity.agentpool_identity.principal_id
+  #skip_service_principal_aad_check = true
 }
