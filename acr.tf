@@ -1,9 +1,6 @@
 data "azuread_service_principal" "aks_sp" {
-  application_id = var.ARM_SP_ID
-}
-
-output "aks_sp" {
-  value = "${data.azuread_service_principal.aks_sp.id}"
+  application_id = var.ARM_CLIENT_ID
+  app_role_assignment_required = false
 }
 
 /*resource "azurerm_container_registry" "acr" {
@@ -21,7 +18,7 @@ data "azurerm_container_registry" "acr" {
 
 resource "azurerm_role_assignment" "acrpull_role" {
   scope                            = data.azurerm_container_registry.acr.id
-  role_definition_name             = "AcrPull"
+  role_definition_name             = "acrpull"
   principal_id                     = data.azuread_service_principal.aks_sp.object_id
-  skip_service_principal_aad_check = true
+  #skip_service_principal_aad_check = true
 }
