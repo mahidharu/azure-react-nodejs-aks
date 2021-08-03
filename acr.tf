@@ -23,4 +23,5 @@ resource "azurerm_role_assignment" "acrpull_role" {
   scope                            = data.azurerm_container_registry.acr.id
   role_definition_name             = "AcrPull"
   principal_id                    = data.azurerm_kubernetes_cluster.reactapp.kubelet_identity.0.object_id
+  skip_service_principal_aad_check = true
 }
