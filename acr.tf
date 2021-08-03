@@ -22,7 +22,7 @@ output "acr_id" {
 data "azurerm_user_assigned_identity" "agentpool_identity" {
   name                = "${azurerm_kubernetes_cluster.reactapp.name}-agentpool"
   resource_group_name = azurerm_kubernetes_cluster.reactapp.node_resource_group
-  depends_on          = [azurerm_kubernetes_cluster.reactapp, azurerm_kubernetes_cluster_node_pool.worker_node_pool]
+  depends_on          = [azurerm_kubernetes_cluster.reactapp]
 }
 
 resource "azurerm_role_assignment" "acrpull_role" {
