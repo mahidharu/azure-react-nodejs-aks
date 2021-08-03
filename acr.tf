@@ -22,5 +22,5 @@ output "acr_id" {
 resource "azurerm_role_assignment" "acrpull_role" {
   scope                            = data.azurerm_container_registry.acr.id
   role_definition_name             = "AcrPull"
-  principal_id                    = azurerm_kubernetes_cluster.reactapp.kubelet_identity[0].object_id
+  principal_id                    = data.azurerm_kubernetes_cluster.reactapp.kubelet_identity.0.object_id
 }
