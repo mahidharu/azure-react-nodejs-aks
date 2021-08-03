@@ -19,7 +19,7 @@ resource "azurerm_role_assignment" "acrpull_role" {
 }
 
 provider "kubernetes" {
-  load_config_file = "false"
+  load_config_file = false
   host = data.azurerm_kubernetes_cluster.reactapp.kube_config.0.host
 
   client_certificate     = base64decode(data.azurerm_kubernetes_cluster.reactapp.kube_config.0.client_certificate)
