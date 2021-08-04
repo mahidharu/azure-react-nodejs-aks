@@ -3,21 +3,6 @@ data "azurerm_kubernetes_cluster" "reactapp" {
   resource_group_name = azurerm_resource_group.reactapp.name
 }
 
-data "azurerm_container_registry" "acr" {
-  name                = var.ARM_ACR
-  resource_group_name = "images"
-}
-
-output "acr_id" {
-  value = data.azurerm_container_registry.acr.id
-}
-
-resource "azurerm_role_assignment" "acrpull_role" {
-  scope                            = data.azurerm_container_registry.acr.id
-  role_definition_name             = "AcrPull"
-  principal_id                    = data.azurerm_kubernetes_cluster.reactapp.kubelet_identity[0].object_id
-}
-
 provider "kubernetes" {
   host = data.azurerm_kubernetes_cluster.reactapp.kube_config.0.host
 
