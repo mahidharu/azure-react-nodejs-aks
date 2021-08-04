@@ -78,3 +78,7 @@ resource "kubernetes_service" "reactapp" {
 output "lb_ip" {
   value = kubernetes_service.reactapp.status.0.load_balancer.0.ingress.0.ip
 }
+
+output "loadbalancer" {
+  value = kubernetes_service.reactapp.metadata.0.name
+}
